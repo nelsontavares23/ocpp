@@ -15,4 +15,5 @@ Contents
 * [Support](support.md)
 * [Development](development.md)
 * [Debugging](debugging.md)
+* [Conformance test](conformance.md)
 

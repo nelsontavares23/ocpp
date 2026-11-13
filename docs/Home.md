@@ -18,4 +18,5 @@ Contents
 * [Support](support)
 * [Development](development)
 * [Debugging](debugging)
+* [Conformance test](conformance)
 

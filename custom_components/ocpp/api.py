@@ -38,6 +38,7 @@ from .enums import (
     Profiles as prof,
 )
 from .chargepoint import SetVariableResult
+from .conformance import async_start_conformance
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 # Uncomment these when Debugging
@@ -94,6 +95,21 @@ CUSTMSG_SERVICE_DATA_SCHEMA = vol.Schema(
     {
         vol.Optional("devid"): cv.string,
         vol.Required("requested_message"): cv.string,
+    }
+)
+CONFORMANCE_SERVICE_DATA_SCHEMA = vol.Schema(
+    {
+        vol.Optional("devid"): cv.string,
+        vol.Optional("level", default="safe"): vol.In(
+            ["safe", "intrusive", "disruptive"]
+        ),
+        vol.Optional("connector", default=1): cv.positive_int,
+        vol.Optional("diagnostics_url"): cv.string,
+        vol.Optional("firmware_url"): cv.string,
+        vol.Optional("message_timeout", default=15): vol.All(
+            vol.Coerce(float), vol.Range(min=1, max=300)
+        ),
+        vol.Optional("wait", default=False): cv.boolean,
     }
 )
 
@@ -1012,3 +1028,8 @@ class CentralSystem:
         key = call.data.get("ocpp_key", "")
         value = await cp.get_configuration(key)
         return {"value": value}
+
+    @check_charger_available
+    async def handle_run_conformance(self, call, cp) -> ServiceResponse:
+        """Handle the OCPP 1.6 conformance test service call."""
+        return await async_start_conformance(self.hass, cp, call.data)
