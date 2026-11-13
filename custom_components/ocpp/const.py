@@ -88,6 +88,7 @@ DEFAULT_WEBSOCKET_PING_TIMEOUT = 20
 DOMAIN = "ocpp"
 CONFIG = "config"
 EVENT_AUTHORIZATION = f"{DOMAIN}_authorization"
+EVENT_CONFORMANCE = f"{DOMAIN}_conformance"
 
 
 def sensor_unique_id(cpid: str, metric: str, connector_id: int | None = None) -> str:

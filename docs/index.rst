@@ -21,4 +21,5 @@ Table of Contents
    Charge_automation
    support
    debugging
+   conformance
    development

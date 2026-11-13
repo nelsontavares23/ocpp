@@ -193,3 +193,69 @@ data_transfer:
       required: false
       advanced: true
       example: "ABC"
+
+run_conformance:
+  name: Run OCPP 1.6 conformance test
+  description: >-
+    Sends every CSMS-initiated OCPP 1.6J operation to a connected charger,
+    checks what the charger sends back and writes a report to
+    <config>/ocpp_conformance/. Diagnostic aid, not a certification.
+  fields:
+    devid:
+      name: Charger identifier
+      description: Either HA charger id or Ocpp id
+      required: false
+      advanced: true
+      example: charger
+    level:
+      name: Level
+      description: safe = read-only checks; intrusive = also changes state temporarily (availability, reservation, charging profile, local list, remote start/stop, unlock); disruptive = also Reset and UpdateFirmware
+      required: false
+      default: safe
+      selector:
+        select:
+          options:
+            - safe
+            - intrusive
+            - disruptive
+    connector:
+      name: Connector
+      description: Connector used for connector-scoped tests
+      required: false
+      advanced: true
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 10
+          mode: box
+    diagnostics_url:
+      name: Diagnostics upload url
+      description: Needed to test GetDiagnostics (otherwise skipped)
+      required: false
+      advanced: true
+      example: "ftp://user:pass@host/diag"
+    firmware_url:
+      name: Firmware url
+      description: Needed to test UpdateFirmware at level disruptive (otherwise skipped)
+      required: false
+      advanced: true
+      example: "http://host/firmware.bin"
+    message_timeout:
+      name: Message timeout (s)
+      description: How long to wait for a message the charger should send after a request (e.g. after TriggerMessage)
+      required: false
+      advanced: true
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 300
+          mode: box
+    wait:
+      name: Wait for the result
+      description: Keep the action open until the test finishes and return the report. Otherwise it runs in the background and the result is published as the ocpp_conformance event and a notification.
+      required: false
+      default: false
+      selector:
+        boolean:

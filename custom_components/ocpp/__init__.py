@@ -29,6 +29,7 @@ from .api import (
     TRANS_SERVICE_DATA_SCHEMA,
     UFW_SERVICE_DATA_SCHEMA,
     CUSTMSG_SERVICE_DATA_SCHEMA,
+    CONFORMANCE_SERVICE_DATA_SCHEMA,
 )
 from .enums import HAChargerServices as csvcs
 from .const import (
@@ -228,6 +229,9 @@ def _register_domain_services(hass: HomeAssistant) -> list[str]:
     async def _route_get_diagnostics(call: ServiceCall) -> None:
         await _route("handle_get_diagnostics", call)
 
+    async def _route_run_conformance(call: ServiceCall) -> ServiceResponse:
+        return await _route("handle_run_conformance", call)
+
     services = [
         csvcs.service_configure,
         csvcs.service_get_configuration,
@@ -237,6 +241,7 @@ def _register_domain_services(hass: HomeAssistant) -> list[str]:
         csvcs.service_set_charge_rate,
         csvcs.service_update_firmware,
         csvcs.service_get_diagnostics,
+        csvcs.service_run_conformance,
     ]
 
     hass.services.async_register(
@@ -288,6 +293,13 @@ def _register_domain_services(hass: HomeAssistant) -> list[str]:
         csvcs.service_get_diagnostics,
         _route_get_diagnostics,
         GDIAG_SERVICE_DATA_SCHEMA,
+    )
+    hass.services.async_register(
+        DOMAIN,
+        csvcs.service_run_conformance,
+        _route_run_conformance,
+        CONFORMANCE_SERVICE_DATA_SCHEMA,
+        supports_response=SupportsResponse.OPTIONAL,
     )
 
     return services
