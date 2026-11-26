@@ -55,13 +55,37 @@ async def test_conformance_runs_end_to_end(
             )
 
             names = {r["test"] for r in response["results"]}
+            
+            # Core Profile
             assert "WebSocket subprotocol" in names
+            assert "BootNotification" in names
+            assert "Heartbeat interval" in names
             assert "GetConfiguration (all)" in names
+            
+            # Error handling
             assert "Unknown action -> CallError" in names
+            assert "Invalid payload -> CallError" in names
+            
+            # Transactions
+            assert "StartTransaction" in names
+            assert "StopTransaction" in names
+
+            # Metering
+            assert "MeterValues structure" in names
+            
             assert response["verdict"] in (
-                "CONFORMANT",
-                "CONFORMANT WITH RESERVATIONS",
-                "NON-CONFORMANT",
+                    "CONFORMANT",
+                    "CONFORMANT WITH RESERVATIONS",
+                    "NON-CONFORMANT",
+            )
+            failed = [
+            r for r in response["results"]
+            if r["status"] == "FAIL"
+            ]
+            print(
+                f"Conformance verdict={response['verdict']} "
+                f"fails={len(failed)}"
+                )  
             )
             assert response["charger"]["cpid"] == cpid
             # intrusive tests are listed, not run, at level safe
